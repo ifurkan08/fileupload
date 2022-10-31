@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "0175c288-c48e-47b5-bec6-47a12a488e9a",
+		"name": "FileUpload",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11932599"
+	},
+	"item": [
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\" : \"furkan3\",\r\n    \"password\" : \"123\" ,\r\n    \"mail\" : \"test@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"tokenkey\", responseBody);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\" : \"furkan3\",\r\n    \"password\" : \"123\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllActiveFiles",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenkey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Bearer",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdXJrYW4zIiwiaXNzIjoiZnVya2FuIiwiaWF0IjoxNjY3MDc4MDM0LCJleHAiOjE2NjcwNzgzMzR9.srjmJB8Q_p4sEJuQGHc2J3Uuu9mJkY_5JTruSmb7X7o",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/file/getAllActiveFiles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"file",
+						"getAllActiveFiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getFile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenkey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Bearer",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdXJrYW4zIiwiaXNzIjoiZnVya2FuIiwiaWF0IjoxNjY3MDc4MDM0LCJleHAiOjE2NjcwNzgzMzR9.srjmJB8Q_p4sEJuQGHc2J3Uuu9mJkY_5JTruSmb7X7o",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/DESKTOP/Desktop/BENİ OKU..!!.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/file/getFile?fileId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"file",
+						"getFile"
+					],
+					"query": [
+						{
+							"key": "fileId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteFile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenkey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Bearer",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdXJrYW4zIiwiaXNzIjoiZnVya2FuIiwiaWF0IjoxNjY3MDc4MDM0LCJleHAiOjE2NjcwNzgzMzR9.srjmJB8Q_p4sEJuQGHc2J3Uuu9mJkY_5JTruSmb7X7o",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/DESKTOP/Desktop/BENİ OKU..!!.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/file/deleteFile?fileId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"file",
+						"deleteFile"
+					],
+					"query": [
+						{
+							"key": "fileId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "uploadFile",
+			"protocolProfileBehavior": {
+				"followAuthorizationHeader": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenkey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/DESKTOP/Desktop/vs.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/file/uploadFile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"file",
+						"uploadFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateFile",
+			"protocolProfileBehavior": {
+				"followAuthorizationHeader": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenkey}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/DESKTOP/Desktop/vs.jpg"
+						},
+						{
+							"key": "id",
+							"value": "28",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/file/updateFile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"file",
+						"updateFile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
