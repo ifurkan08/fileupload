@@ -1,10 +1,6 @@
 package com.ets.fileupload.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
-
-import java.util.List;
-
 public abstract class BaseModel<S, U> {
     private String[] ignoreProperties;
 

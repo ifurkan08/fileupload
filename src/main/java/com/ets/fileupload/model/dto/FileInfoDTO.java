@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 
 @Data

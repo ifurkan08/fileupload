@@ -1,14 +1,21 @@
 package com.ets.fileupload.model.response;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.http.HttpStatus;
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class ResponseBase {
-    private List<String> errorList = new ArrayList<>();
-    public void addError(String error){
-        errorList.add(error);
+    private String errormessage;
+    private HttpStatus httpStatus;
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
-    public List<String> getErrorList(){
-        return errorList;
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 }
