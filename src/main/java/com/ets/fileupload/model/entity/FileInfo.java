@@ -1,11 +1,6 @@
 package com.ets.fileupload.model.entity;
 
-import com.ets.fileupload.model.response.UploadFileResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,10 +9,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "fileinfo")
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class FileInfo implements Serializable {
 
     public static final String BACK_SLASH = "\\";
@@ -30,7 +26,7 @@ public class FileInfo implements Serializable {
 
     public static final String fileSizeErrorMessage="File size too large";
 
-    public static final String fileDeletedOrNotExist="File to Update does not exist or has been deleted";
+    public static final String fileDeletedOrNotExist="The file trying to update does not exist or has been deleted";
 
 
     private static Long maxFileSize = 5242880L;
@@ -63,7 +59,7 @@ public class FileInfo implements Serializable {
         if(!extensionList.contains(ext)){
             return unsupportedErrorMessage;
         }
-        if(maxFileSize.compareTo(size) == -1){
+        if(maxFileSize.compareTo(size) < 0){
             return fileSizeErrorMessage;
         }
         return "OK";

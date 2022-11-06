@@ -20,8 +20,13 @@ public class UserServiceImpl implements IUserService {
     private UserDetailsService userDetailsService;
 
     @Override
-    public UserEntity addUser(UserSignUp userSignUpRequest) {
+    public UserEntity addUser(UserSignUp userSignUpRequest){
+        boolean isUserNotExist = userRepository.findFirstByUserName(userSignUpRequest.getUserName()).isEmpty();
+        if(!isUserNotExist){
+            throw new IllegalArgumentException("Username already taken");
+        }
         UserEntity user = userSignUpRequest.convertToBase(userSignUpRequest, new UserEntity());
+
         user=userRepository.save(user);
         userDetailsService.addUser(user);
         return user ;

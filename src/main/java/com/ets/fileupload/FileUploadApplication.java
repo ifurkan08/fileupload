@@ -2,7 +2,7 @@ package com.ets.fileupload;
 
 import com.ets.fileupload.storage.StorageProperties;
 import com.ets.fileupload.storage.StorageService;
-import org.modelmapper.ModelMapper;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,15 +12,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.SecurityScheme;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties(StorageProperties.class)
 @EnableAsync
+@EnableSwagger2
 public class FileUploadApplication {
 
 	@Autowired
@@ -29,20 +36,6 @@ public class FileUploadApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FileUploadApplication.class, args);
 	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurerAdapter() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				String urls = env.getProperty("core.url");
-				CorsRegistration reg = registry.addMapping("/api/**")
-						.allowedOrigins("*").allowedMethods("GET", "PUT", "POST", "DELETE");
-
-			}
-		};
-	}
-
 	@Bean
 	CommandLineRunner init(StorageService storageService) {
 		return (args) -> {
@@ -50,9 +43,26 @@ public class FileUploadApplication {
 			storageService.init();
 		};
 	}
+	@Bean
+	public Docket newsApi() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
+				.paths(PathSelectors.any())
+				.build()
+				.securitySchemes(Lists.newArrayList(apiKey()))
+				.apiInfo(apiInfo());
+
+	}
 
 	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
+	SecurityScheme apiKey() {
+		return new ApiKey("token", "token", "header");
+	}
+	private ApiInfo apiInfo() {
+		return new ApiInfoBuilder()
+				.title("Spring REST Sample with Swagger")
+				.description("Spring REST Sample with Swagger")
+				.build();
 	}
 }

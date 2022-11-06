@@ -1,7 +1,6 @@
 package com.ets.fileupload.controller;
 
 import com.ets.fileupload.model.request.FileInfoRequest;
-import com.ets.fileupload.model.response.DeleteFileResponse;
 import com.ets.fileupload.model.response.FileInfoResponse;
 import com.ets.fileupload.model.response.UploadFileResponse;
 import com.ets.fileupload.services.services.IFileInfoService;
@@ -13,8 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -36,13 +33,12 @@ public class FileController {
     public ResponseEntity<UploadFileResponse> uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
         UploadFileResponse uploadFileResponse = fileInfoService.saveFile(FileInfoRequest.builder().multipartFile(file)
                 .requestingUser(principal.getName()).build());
-        return ResponseEntity.status(uploadFileResponse.getHttpStatus()).body(uploadFileResponse);
+        return ResponseEntity.ok().body(uploadFileResponse);
     }
     @GetMapping("getFile")
     public ResponseEntity<?> getFile(@RequestParam("fileId") Long id) {
         try {
-            Resource resource = null;
-            resource = fileInfoService.findFileById(id);
+            Resource resource = fileInfoService.findFileById(id);
             if (resource == null) {
                 return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
             }
@@ -53,10 +49,6 @@ public class FileController {
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                     .body(resource);
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).
-                    body(e.getMessage());
         }
         catch (IOException e) {
             return ResponseEntity.internalServerError().build();
@@ -69,13 +61,13 @@ public class FileController {
         UploadFileResponse updateFileResponse = fileInfoService.updateFile(FileInfoRequest.builder().multipartFile(file)
                 .requestingUser(principal.getName())
                 .id(id).build());
-        return ResponseEntity.status(updateFileResponse.getHttpStatus()).body(updateFileResponse);
+        return ResponseEntity.ok().body(updateFileResponse);
     }
 
     @DeleteMapping(path = "deleteFile")
-    public ResponseEntity<DeleteFileResponse> deleteFile(@RequestParam("fileId") Long id) throws IOException {
-        DeleteFileResponse deleteFileResponse = fileInfoService.deleteFile(id);
-        return ResponseEntity.status(deleteFileResponse.getHttpStatus()).body(deleteFileResponse);
+    public ResponseEntity<?> deleteFile(@RequestParam("fileId") Long id) throws IOException {
+        fileInfoService.deleteFile(id);
+        return ResponseEntity.ok().build();
     }
 
 

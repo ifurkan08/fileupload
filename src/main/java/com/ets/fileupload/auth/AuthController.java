@@ -27,17 +27,14 @@ public class AuthController {
 
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
-        try {
-            authenticationManager.
-                    authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),loginRequest.getPassword()));
-            return ResponseEntity.ok(tokenManager.generateToken(loginRequest.getUserName()));
-        }catch (Exception e){
-            throw e;
-        }
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        authenticationManager.
+                authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+        return ResponseEntity.ok(tokenManager.generateToken(loginRequest.getUserName()));
     }
+
     @PostMapping("signup")
-    public ResponseEntity<String> signup(@RequestBody UserSignUp userSignUpRequest){
+    public ResponseEntity<String> signup(@RequestBody UserSignUp userSignUpRequest) {
         userService.addUser(userSignUpRequest);
         return ResponseEntity.ok().body(null);
     }

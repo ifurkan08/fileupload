@@ -2,17 +2,15 @@ package com.ets.fileupload.model.dto;
 
 import com.ets.fileupload.model.BaseModel;
 import com.ets.fileupload.model.entity.FileInfo;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import javax.annotation.PostConstruct;
+import lombok.*;
+
 import java.util.Date;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(builderMethodName = "FileInfoDTOBuilder")
+@Getter
+@Setter
 public class FileInfoDTO extends BaseModel<FileInfoDTO,FileInfo> {
     private Long id;
 
@@ -30,8 +28,4 @@ public class FileInfoDTO extends BaseModel<FileInfoDTO,FileInfo> {
 
     private Date updateDate;
 
-    @PostConstruct
-    public void init() {
-        super.setIgnoreProperties(new String[]{"a", "b", "c"});
-    }
 }

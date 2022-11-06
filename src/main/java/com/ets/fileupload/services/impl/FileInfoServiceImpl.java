@@ -1,9 +1,9 @@
 package com.ets.fileupload.services.impl;
 
+import com.ets.fileupload.exceptions.ApiException;
 import com.ets.fileupload.model.dto.FileInfoDTO;
 import com.ets.fileupload.model.entity.FileInfo;
 import com.ets.fileupload.model.request.FileInfoRequest;
-import com.ets.fileupload.model.response.DeleteFileResponse;
 import com.ets.fileupload.model.response.FileInfoResponse;
 import com.ets.fileupload.model.response.UploadFileResponse;
 import com.ets.fileupload.repositories.FileInfoRepository;
@@ -12,10 +12,7 @@ import com.ets.fileupload.storage.StorageService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -41,7 +38,7 @@ public class FileInfoServiceImpl implements IFileInfoService {
                 .build();
         String validMessage=fileInfo.validMessage();
         if(!validMessage.equals("OK")){
-            return UploadFileResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).errormessage(validMessage).build();
+            throw new ApiException(validMessage);
         }
         fileInfoRepository.save(fileInfo);
         storageService
@@ -49,33 +46,30 @@ public class FileInfoServiceImpl implements IFileInfoService {
                 fileInfoRequest.getMultipartFile().getOriginalFilename(),
                 fileInfo.getId().toString());
         FileInfoDTO fileInfoDTO = new FileInfoDTO();
-        return UploadFileResponse.builder().fileInfoDTO
-                (fileInfoDTO.convertTo(fileInfo,fileInfoDTO)).httpStatus(HttpStatus.OK)
-                .build();
+        return new UploadFileResponse(fileInfoDTO.convertTo(fileInfo,fileInfoDTO));
     }
 
     @Override
     public FileInfoResponse getAllActiveFileInfo() {
         return new FileInfoResponse(
                 fileInfoRepository.findByDeleted(false)
-                        .stream().map(p -> FileInfoDTO.builder().build().convertTo(p,new FileInfoDTO())).collect(Collectors.toList()));
+                        .stream().map(p -> FileInfoDTO.FileInfoDTOBuilder().build().convertTo(p,new FileInfoDTO())).collect(Collectors.toList()));
     }
 
     @Override
-    public Resource findFileById(Long id) throws EntityNotFoundException {
+    public Resource findFileById(Long id) {
         FileInfo fileInfo = fileInfoRepository.findById(id).orElse(null);
         if(fileInfo == null){
-            throw new EntityNotFoundException("file does not exist");
+            throw new ApiException("There is no file exist");
         }
-        Resource resource =storageService.loadAsResource(fileInfo.getFullPath());
-        return resource;
+        return storageService.loadAsResource(fileInfo.getFullPath());
     }
 
     @Override
     public UploadFileResponse updateFile(FileInfoRequest fileInfoRequest) throws IOException {
         FileInfo fileInfo = fileInfoRepository.findById(fileInfoRequest.getId()).orElse(null);
         if(fileInfo == null || fileInfo.isDeleted()){
-            return UploadFileResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).errormessage(FileInfo.fileDeletedOrNotExist).build();
+            throw new ApiException(FileInfo.fileDeletedOrNotExist);
         }
         String fullPath= fileInfo.getFullPath();
         fileInfo.setFileName(FilenameUtils.getBaseName(fileInfoRequest.getMultipartFile().getOriginalFilename()));
@@ -85,7 +79,7 @@ public class FileInfoServiceImpl implements IFileInfoService {
         fileInfo.setUpdateDate(new Date());
         String validMessage=fileInfo.validMessage();
         if(!validMessage.equals("OK")){
-            return UploadFileResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).errormessage(validMessage).build();
+            throw new ApiException(validMessage);
         }
         fileInfoRepository.save(fileInfo);
         storageService.delete(fullPath);
@@ -94,22 +88,18 @@ public class FileInfoServiceImpl implements IFileInfoService {
                         fileInfoRequest.getMultipartFile().getOriginalFilename(),
                         fileInfo.getId().toString());
         FileInfoDTO fileInfoDTO = new FileInfoDTO();
-        return UploadFileResponse.builder().fileInfoDTO
-                        (fileInfoDTO.convertTo(fileInfo,fileInfoDTO)).httpStatus(HttpStatus.OK)
-                .build();
+        return new UploadFileResponse(fileInfoDTO.convertTo(fileInfo,fileInfoDTO));
     }
 
     @Override
-    public DeleteFileResponse deleteFile(Long fileId) throws IOException {
+    public void deleteFile(Long fileId) throws IOException {
         FileInfo fileInfo = fileInfoRepository.findById(fileId).orElse(null);
         if(fileInfo == null || fileInfo.isDeleted()){
-            return DeleteFileResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).errormessage(FileInfo.fileDeletedOrNotExist).build();
+            throw new ApiException(FileInfo.fileDeletedOrNotExist);
         }
         fileInfo.setDeleted(true);
         fileInfoRepository.save(fileInfo);
         storageService.delete(fileInfo.getFullPath());
-        return DeleteFileResponse.builder().httpStatus(HttpStatus.OK)
-                .build();
     }
 
 
