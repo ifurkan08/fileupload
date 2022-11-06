@@ -43,26 +43,4 @@ public class FileUploadApplication {
 			storageService.init();
 		};
 	}
-	@Bean
-	public Docket newsApi() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
-				.paths(PathSelectors.any())
-				.build()
-				.securitySchemes(Lists.newArrayList(apiKey()))
-				.apiInfo(apiInfo());
-
-	}
-
-	@Bean
-	SecurityScheme apiKey() {
-		return new ApiKey("token", "token", "header");
-	}
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-				.title("Spring REST Sample with Swagger")
-				.description("Spring REST Sample with Swagger")
-				.build();
-	}
 }
